@@ -1,0 +1,146 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id Int @id @default(autoincrement())
+  firstName String @map("first_name")
+  lastName String @map("last_name")
+  surname String?
+  email String? @unique
+  phoneNumber String @unique @map("phone_number")
+  inn String @unique
+  policies Policy[]
+  passport Passport?
+  
+  @@map("clients")
+}
+
+model Passport {
+  id Int @id @default(autoincrement())
+  seria String 
+  number String
+  dateOfBirth DateTime @map("date_of_birth")
+  placeOfBirth String @map("place_of_birth")
+  issuedByWhom String @map("issued_by_whom")
+  issuedAt DateTime @map("issued_at")
+  departmentCode String @map("department_code")
+  clientId Int @unique @map("client_id")
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  registrationAddress RegistrationAddress?
+  residentialAddress ResidentialAddress?
+
+  @@map("passports")
+}
+
+model RegistrationAddress {
+  id Int @id @default(autoincrement())
+  region String
+  city String
+  street String
+  house String
+  apartment String?
+  registeredAt DateTime @map("registered_at")
+  passportId Int @unique
+  passport Passport @relation(fields: [passportId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("registration_addresses")
+}
+
+model ResidentialAddress {
+  id Int @id @default(autoincrement())
+  region String
+  city String
+  street String
+  house String
+  apartment String?
+  passportId Int @unique
+  passport Passport @relation(fields: [passportId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("residential_addresses")
+}
+
+model Policy {
+  id Int @id @default(autoincrement())
+  number String @unique
+  issuedAt DateTime @default(now()) @map("issued_at")
+  expiresAt DateTime @default(now()) @map("expires_at")
+  insurancePremium Decimal @map("insurance_premium")
+  coverage Decimal
+  policyPath String?
+  insuredPersonId Int @map("insured_person_id")
+  insuredPerson Client @relation(fields: [insuredPersonId], references: [id])
+  insuranceProductId Int @map("insurance_product_id")
+  insuranceProduct InsuranceProduct @relation(fields: [insuranceProductId], references: [id])
+
+  @@map("policies")
+}
+
+model PolicyNumberReserved {
+  id Int @id @default(autoincrement())
+  number String @unique
+  uuid String @db.Uuid
+
+  @@map("policies_number_reserved")
+}
+
+enum InsuranceProductType {
+  investment_insurance
+  insurance_savings_plan
+
+  @@map("insurance_product_type")
+}
+
+model InsuranceProduct {
+  id Int @id @default(autoincrement())
+  name String
+  description String?
+  type InsuranceProductType
+  minAge Int @map("min_age")
+  maxAge Int @map("max_age")
+  minInsurancePremium Decimal @map("min_insurance_premium")
+  maxInsurancePremium Decimal @map("max_insurance_premium")
+  minCoverage Decimal @map("min_coverage")
+  maxCoverage Decimal @map("max_coverage")
+  minHowYears Decimal @map("min_how_years")
+  maxHowYears Decimal @map("max_how_years")
+  policies Policy[]
+
+  @@map("insurance_products")
+}
+
+model Employee {
+  id Int @id @default(autoincrement())
+  login String @unique
+  password String
+  email String @unique
+  firstName String @map("first_name")
+  lastName String @map("last_name")
+  surname String?
+  Session Session[]
+  
+  @@map("employees")
+}
+
+model Session {
+  id Int @id @default(autoincrement())
+  ipv4 String
+  email String
+  userAgent String @map("user_agent")
+  refreshToken String @db.Uuid @unique @map("refresh_token")
+  employeeId Int @map("employee_id")
+  employee Employee @relation(fields: [employeeId], references: [id])
+
+  @@map("sessions")
+}

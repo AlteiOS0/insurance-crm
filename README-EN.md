@@ -1,31 +1,31 @@
-[English](README-EN.md)
+[Russian](README.md)
 
 # insurance-crm
-Проект представляет собой систему управления взаимоотношения с клиентами для страховых компаний.
-Реализован на Node.js с использованием `Fastify`, `Prisma ORM`, `PostgreSQL`
+The project is a customer relationship management system for insurance companies.
+Implemented on Node.js using `Fastify`, `Prisma ORM`, `PostgreSQL`.
 
-## Запуск проекта с докером
-Для того, чтобы начать работу с проектом, нужен docker с образами `node:latest`, `nginx:latest`, `postgres:latest`.
-Nginx выступает в роли обратного прокси сервера.
+## Starting the project with docker
+To start working with the project, you need docker with images `node:latest`, `nginx:latest`, `postgres:latest`.
+Nginx acts as a reverse proxy server.
 
-Чтобы клонировать репозиторий введите команду:
+To clone a repository enter the command:
 `git clone https://github.com/AlteiOS0/insurance-crm.git`
 
-Для сборки контейнера нужно прописать команду `docker compose build`
+To build a container, enter the `docker compose build` command
 
-Далее для запуска контейнеров `docker compose up`
+Next, to start containers `docker compose up`
 
-## Запуск проекта без докера
+## Start the project without docker
 
-Для работы с проектом напрямую без докера, а также работы с проектом
+To work with the project directly without docker, as well as work with the project
 
-Необходимо ввести команду для установки зависимостей `npm install`
+It is necessary to enter the command for installing dependencies `npm install`
 
-Для деплоя в бд и генерации PrismaClient `npm run prisma:init`
+To deploy to the database and generate PrismaClient `npm run prisma:init`
 
-И наконец для запуска сервера `npm run dev`
+And finally to start the server `npm run dev`
 
-## Структура проекта
+## Project structure
 ```
 insurance
 │   .dockerignore

@@ -1,0 +1,54 @@
+services:
+  server:
+    build:
+      context: .
+    expose:
+      - 3000
+    depends_on:
+        db:
+          condition: service_healthy
+    env_file:
+      - .prod.env
+    networks:
+      - insurance-network
+    volumes:
+      - src:/usr/src/app
+    
+  db:
+    image: postgres:latest
+    restart: always
+    user: postgres
+    volumes:
+      - db-data:/var/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=insurance
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: postgres -c listen_addresses='*'
+    networks:
+      - insurance-network
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80
+    depends_on:
+      - server
+    networks:
+      - insurance-network
+
+networks:
+  insurance-network:
+    driver: bridge
+volumes:
+  db-data:
+  src:    
